@@ -47,25 +47,6 @@ Authenticating is required to allow both the heroku and git commands to operate.
     heroku create
 ```
 
-### Deploy!
-
-6. Hold your horses! We've made a lot of changes -- let's STOP AND COMMIT!
-``` bash
-    git add . -A
-    git commit -m "ready for heroku deploy attempt #1"
-```
-
-7. Now we can deploy:
-``` bash
-    git push heroku master
-```
-
-If you missed a step just ask for help. Otherwise you should be able to visit your application by saying the following:
-
-```bash
-    heroku open
-```
-
 ## Top level `package.json`
 
 In the root of your project, you should see the `front-end` folder, the `back-end` folder, and a `package.json` file.  The following chunk of code needs to go into the `package.json` file, under the `scripts` property.
@@ -80,31 +61,6 @@ In the root of your project, you should see the `front-end` folder, the `back-en
 1. The `deploy` script bundles up all our Angular code and drops it into a folder called `dist` next to our backend `server.js` file (more on that soon).
 
 2. The `start` script kicks off the back end `server.js` which also serves up the front end `dist` folder.
-
-## `back-end` `package.json`
-
-Navigate to the `back-end` folder and double-check your `package.json` to make sure that all your depenedencies are present. If something is missing, install it.
-
-For example, here are a bunch of common dependencies (*DO NOT COPY*):  
-``` javascript
-    {
-      "dependencies": {
-        "body-parser": "^1.13.3",
-        "bower": "^1.5.2",
-        "express": "^4.13.3",
-        "express-session": "^1.11.3",
-        "method-override": "^2.3.5",
-        "mongoose": "^4.1.5"
-      }
-    }
-```
-
-If your `package.json` is missing any dependencies, you will need to both `install` and `--save` the package. For example, if you notice that the `mongoose` package is missing from your `package.json` you would need to run:
-
-```bash
-    npm install --save mongoose
-```
-
 
 ## `server.js`
 
@@ -151,6 +107,30 @@ Put the following code inside your `server.js` file:
       });
     ```
 
+## `back-end` `package.json`
+
+Navigate to the `back-end` folder and double-check your `package.json` to make sure that all your depenedencies are present. If something is missing, install it.
+
+For example, here are a bunch of common dependencies (*DO NOT COPY*):  
+``` javascript
+    {
+      "dependencies": {
+        "body-parser": "^1.13.3",
+        "bower": "^1.5.2",
+        "express": "^4.13.3",
+        "express-session": "^1.11.3",
+        "method-override": "^2.3.5",
+        "mongoose": "^4.1.5"
+      }
+    }
+```
+
+If your `package.json` is missing any dependencies, you will need to both `install` and `--save` the package. For example, if you notice that the `mongoose` package is missing from your `package.json` you would need to run:
+
+```bash
+    npm install --save mongoose
+```
+
 ## `.gitignore`
 
 Inside your `front-end` folder will be a `.gitignore` file.  Move this up to the same level as your `package.json`.
@@ -167,7 +147,9 @@ Delete the `/dist` line toward the top of the `.gitignore` file and save it.
 
 2. Now go into your `index.js` file and change your Sequelize setup line to the following:
 
-`let sequelize = new Sequelize(process.env.DATABASE_URL || 'postgres://<your_user>@localhost:5432/<your_db>');`
+```js
+    let sequelize = new Sequelize(process.env.DATABASE_URL || 'postgres://<your_user>@localhost:5432/<your_db>');
+```
 
 ### MongoDB
 
@@ -203,6 +185,11 @@ Whenever you push to GitHub, you should also run the following commands to get y
 
 1. `npm run deploy` in the top level of your folder.
 2. Git add, git commit, and push to `heroku master`.
+3. Visit your application by running the following in Terminal:
+
+```bash
+    heroku open
+```
 
 ## Debugging Tips
 
