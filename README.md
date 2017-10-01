@@ -23,46 +23,46 @@ If you haven't already, please read through [this guide](https://github.com/SF-W
 
 Put the following code inside your `server.js` file:
 
-1. ```js
-  require('dotenv').config();
-  ```
-  - This allows us to use `process.env` locally.
-2. ```js
-  const express = require('express');
-  const app = express();
-  const path = require('path');
-  ```
-  - This sets up our critical node packages.
-3. ```js
-  //CORS setup to allow other ports from this host
+1. The code below allows us to use `process.env` locally.
+    ```js
+      require('dotenv').config();
+    ```
+2. The code below sets up our critical node packages.
+    ```js
+      const express = require('express');
+      const app = express();
+      const path = require('path');
+    ```
+3. The code below enables CORS so that your Angular front end can communicate with your back end without errors when coding locally.
+    ```js
+      //CORS setup to allow other ports from this host
 
-  //Only needed if not on Heroku/prod
-  if(!process.env.DYNO) {
-    app.use(function(req, res, next) {
-      res.header("Access-Control-Allow-Origin", "http://localhost:4200");
-      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-      res.header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE");
-      next();
-    });
-  }
-  ```
-- This enables CORS so that your Angular front end can communicate with your back end without errors when coding locally.
-4. ```js
-  app.use(express.static(__dirname + '/dist'));
+      //Only needed if not on Heroku/prod
+      if(!process.env.DYNO) {
+        app.use(function(req, res, next) {
+          res.header("Access-Control-Allow-Origin", "http://localhost:4200");
+          res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+          res.header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE");
+          next();
+        });
+      }
+    ```
+4. The first line below serves up the front end.  Make sure you put the `app.get` part below any back end routes, because it creates a route that defaults to the front end if no back end routes exist (by serving up the Angular `index.html` file).
+    ```js
+      app.use(express.static(__dirname + '/dist'));
 
-  app.get('/*', function(req, res) {
-    res.sendFile(path.join(__dirname + '/dist/index.html'));
-  });
-  ```
-  - The first line serves up the front end.  Make sure you put the `app.get` part below any back end routes, because it creates a route that defaults to the front end if no back end routes exist (by serving up the Angular `index.html` file).
-5. ```js
-  let port = process.env.PORT || 3000;
+      app.get('/*', function(req, res) {
+        res.sendFile(path.join(__dirname + '/dist/index.html'));
+      });
+    ```
+5. The code below makes sure we can serve the app locally (3000) and on Heroku (process.env.PORT).
+    ```js
+      let port = process.env.PORT || 3000;
 
-  app.listen(port, function() {
-    console.log(`Listening on port ${port}`);
-  });
-  ```
-  - This makes sure we can serve the app locally (3000) and on Heroku (process.env.PORT).
+      app.listen(port, function() {
+        console.log(`Listening on port ${port}`);
+      });
+    ```
 
 ## Setting up the DB
 
