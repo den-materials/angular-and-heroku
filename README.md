@@ -6,9 +6,127 @@
 
 ### Our Folder Structure
 
-We will be following the patter of our [tunr](https://github.com/den-materials/modeling-tunr) [labs](https://github.com/den-materials/tunr-relationships) for this deployment.  That is, we will have a separate folder for the back end API, and one for the front end Angular code.
+We will be following the pattern of our [tunr](https://github.com/den-materials/modeling-tunr) [labs](https://github.com/den-materials/tunr-relationships) for this deployment.  That is, we will have a separate folder for the back end API, and one for the front end Angular code.
 
 ### Heroku Setup
+
+## Getting set up on Heroku with Node + Mongoose
+
+### Before you do anything
+1) Stop and commit. Make sure your app is under version control with `git`.  If you're not sure whether your project is under version control yet, you definitely haven't been commiting often enough! But run `git status` to check if your project directory is a repo and `git init` to make it into one if necessary. __Stop and commit your changes.__
+
+2) Sign up for an account with heroku: https://www.heroku.com/
+
+3) Install the heroku toolbelt (if you haven't done so already):
+
+**OSX users:**
+<a href="https://cli-assets.heroku.com/branches/stable/heroku-osx.pkg">Click this link to download the ToolBelt for OSX</a>  Run the file and follow the prompts to install.
+
+**Ubuntu users:** Run this command from your terminal:
+```bash
+wget -O- https://toolbelt.heroku.com/install-ubuntu.sh | sh
+```
+
+Once installed, you can use the heroku command from your command shell.
+Log in using the email address and password you used when creating your Heroku account:
+
+```bash
+heroku login
+# Enter your Heroku credentials.
+# Email: zeke@example.com
+# Password:
+# ...
+```
+
+Authenticating is required to allow both the heroku and git commands to operate.
+
+**(NOTE YOUR PROJECT MUST BE A GIT REPO TO CONTINUE.)**.
+
+### Preparing for Heroku Deploy
+
+4) Add a new remote to your project that points to Heroku's servers:
+
+```bash
+    heroku create
+```
+
+5) In your `server.js` file, modify `app.listen` to use `process.env.PORT` (this will be set, dynamically, by Heroku):
+
+```javascript
+    app.listen(process.env.PORT || 3000)
+```
+
+6) Tell heroku to use the mongolab addon. In your terminal, run:
+
+```bash
+    heroku addons:create mongolab
+```
+
+At this point, the command line will probably ask you to enter a credit card number. Follow the prompt.
+
+> Heroku is a "freemium" service. Be careful! They will charge you if you exceed their data limits -- but our projects are tiny so we don't expect to get a lot of traffic!
+
+7) **Patience...**  If you had to enter in a credit card, you can run `heroku addons` to check/confirm that mongolab was addded. __You may need to wait a few minutes for mogolab to become active.__
+
+8) Update your database connection to point to Heroku's database. Open `models/index.js` and add the following to the `mongoose.connect` method:
+
+```javascript
+    mongoose.connect( process.env.MONGODB_URI || "YOUR CURRENT LOCALHOST DB CONNECTION STRING HERE" );
+```
+
+Congrats! Your application knows what port to run on, and what database to connect to - you're almost all set up to work in "production" on Heroku's servers!
+
+STOP AND COMMIT!
+
+### Confirm your Dependencies
+
+9) Double check your `package.json` to make sure that all your depenedencies are present. If something is missing install it.
+
+For example, here are a bunch of common dependencies (*DO NOT COPY*):  
+``` javascript
+    {
+      "dependencies": {
+        "body-parser": "^1.13.3",
+        "bower": "^1.5.2",
+        "express": "^4.13.3",
+        "express-session": "^1.11.3",
+        "method-override": "^2.3.5",
+        "mongoose": "^4.1.5"
+      }
+    }
+```
+
+If your `package.json` is missing any dependencies, you will need to both `install` and `--save` the package. For example, if you notice that the `mongoose` package is missing from your `package.json` you would need to run:
+
+```bash
+    npm install --save mongoose
+```
+
+### Deploy!
+
+10) Hold your horses! We've made a lot of changes -- let's STOP AND COMMIT!
+``` bash
+    git add . -A
+    git commit -m "ready for heroku deploy attempt #1"
+```
+
+11) Now we can deploy:
+``` bash
+    git push heroku master
+```
+
+If you missed a step just ask for help. Otherwise you should be able to visit your application by saying the following:
+
+```bash
+    heroku open
+```
+
+12) If you have a seed task, you can run it now (assuming everything else is working):
+
+``` bash
+heroku run bash
+> node seed.js
+```
 
 If you haven't already, please read through [this guide](https://github.com/SF-WDI-LABS/shared_modules/blob/master/how-to/heroku-mean-stack-deploy.md) on deploying to Heroku.  
 
@@ -18,6 +136,21 @@ If you haven't already, please read through [this guide](https://github.com/SF-W
 2. Go into the folder and initialize it as an npm repository with `npm init -y`.
 3. Create a `front-end` folder with `ng new` if you don't already have one.
 4. Create a `back-end` folder, go inside, initialize it as an npm repository, and create a `server.js` file.
+
+## Top level `package.json`
+
+In the root of your project, you should see the `front-end` folder, the `back-end` folder, and a `package.json` file.  The following chunk of code needs to go into the `package.json` file, under the `scripts` property.
+
+```json
+  "scripts": {
+    "deploy": "cd front-end && ng build --aot -prod -op ../back-end/dist && cd ..",
+    "start": "node back-end/server.js"
+  },
+```
+
+1. The `deploy` script bundles up all our Angular code and drops it into a folder called `dist` next to our backend `server.js` file (more on that soon).
+
+2. The `start` script kicks off the back end `server.js` which also serves up the front end `dist` folder.
 
 ## `server.js`
 
@@ -64,8 +197,39 @@ Put the following code inside your `server.js` file:
       });
     ```
 
+## `.gitignore`
+
+Inside your `front-end` folder will be a `.gitignore` file.  Move this up to the same level as your `package.json`.
+
+Delete the `/dist` line toward the top of the `.gitignore` file and save it.
+
 ## Setting up the DB
 
 ### PSQL
 
+If you are using postgres for your DB, you will need to run the command below to add a PSQL addon:
+
+`heroku addons:create heroku-postgresql:hobby-dev`
+
 ### MongoDB
+
+If you are using mongo for your DB, you will need to run the command below to add a MongoDB addon:
+
+``
+
+## Pushing to Heroku
+
+Whenever you push to GitHub, you should also run the following commands to get your code to Heroku:
+
+1. `npm run deploy` in the top level of your folder.
+2. Git add, git commit, and push to `heroku master`.
+
+## Debugging Tips
+
+Here are some helpful commands for debugging your application on Heroku:
+
+#### `heroku logs`
+This command lists your most recent application server logs. Helpful for figuring out why your application may be crashing and burning.
+
+#### `heroku run bash`
+This command allows you to run terminal _on Heroku's servers_. This is a handy way for us to poke around and run commands on our application (like seeding the database, and checking that everything was installed correctly).
