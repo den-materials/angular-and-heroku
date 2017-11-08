@@ -37,6 +37,15 @@ heroku login
 
 Authenticating is required to allow both the heroku and git commands to operate.
 
+### Cleaning out extra `.git` folder
+
+The Angular CLI tries to help us out by making its own `.git` folder, but we don't need it here.  Go into your `front-end` folder and delete it:
+
+```
+cd front-end/
+rm -rf .git
+```
+
 **(NOTE YOUR PROJECT MUST BE A GIT REPO TO CONTINUE.)**.
 
 ### Preparing for Heroku Deploy
