@@ -170,7 +170,31 @@ At this point, the command line will probably ask you to enter a credit card num
     mongoose.connect( process.env.MONGODB_URI || "YOUR CURRENT LOCALHOST DB CONNECTION STRING HERE" );
 ```
 
-### Remoting to Heroku
+## Making your services more flexible
+
+If you are following the model from the tunr lab, you will see a `baseUrl` variable set to `http://localhost:3000`.  In order to get ready for heroku, you should make the following changes:
+
+1. Change the line `baseUrl = 'http://localhost:3000';` to the following:
+
+```ts
+	baseUrl: string;
+```
+
+2. Add the code below to the bottom of the service class (right above the last curly brace):
+
+```ts
+  constructor(private http: Http) { 
+  	if(isDevMode()) {
+  		this.baseUrl = 'http://localhost:3000';
+  	} else {
+  		this.baseUrl = '';
+  	}
+  }
+```
+
+This final block will check if we are in `DevMode` (on our local computer) or `ProdMode` (on Heroku), and only add this `localhost:3000` piece in if we are local.  What happens if we're on Heroku, then?  Well remember how we put our whole front end in a `dist` folder inside the `back-end` folder?  Because we did that, the front-end and back-end will all be served on the same port (i.e. the Node one).
+
+## Remoting to Heroku
 
 If you have a `seed` or `dbSetup` task, you can run any commands on your heroku server just like you can locally, like this (assuming everything else is working):
 
