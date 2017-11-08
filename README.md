@@ -145,7 +145,7 @@ Delete the `/dist` line toward the top of the `.gitignore` file and save it.
 
 `heroku addons:create heroku-postgresql:hobby-dev`
 
-2. Now go into your `index.js` file and change your Sequelize setup line to the following:
+2. Now go into your `models/index.js` file and change your Sequelize setup line to the following:
 
 ```js
     let sequelize = new Sequelize(process.env.DATABASE_URL || 'postgres://<your_user>@localhost:5432/<your_db>');
