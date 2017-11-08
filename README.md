@@ -12,6 +12,7 @@ We will be following the pattern of our [tunr](https://github.com/den-materials/
 
 1. Create a folder with the name of your project.
 2. Go into the folder and initialize it as an npm repository with `npm init -y`.
+3. If you have not already, initialize a git repository in this directory with `git init`.
 3. Create a `front-end` folder with `ng new` if you don't already have one.
 4. Create a `back-end` folder, go inside, initialize it as an npm repository, and create a `server.js` file.
 
@@ -36,15 +37,6 @@ heroku login
 ```
 
 Authenticating is required to allow both the heroku and git commands to operate.
-
-### Cleaning out extra `.git` folder
-
-The Angular CLI tries to help us out by making its own `.git` folder, but we don't need it here.  Go into your `front-end` folder and delete it:
-
-```
-cd front-end/
-rm -rf .git
-```
 
 **(NOTE YOUR PROJECT MUST BE A GIT REPO TO CONTINUE.)**.
 
