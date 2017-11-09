@@ -55,13 +55,16 @@ In the root of your project, you should see the `front-end` folder, the `back-en
 ```json
   "scripts": {
     "deploy": "cd front-end && ng build --aot -prod -op ../back-end/dist && cd ..",
-    "start": "node back-end/server.js"
+    "start": "node back-end/server.js",
+    "postinstall": "cd back-end && npm install"
   },
 ```
 
 1. The `deploy` script bundles up all our Angular code and drops it into a folder called `dist` next to our backend `server.js` file (more on that soon).
 
 2. The `start` script kicks off the back end `server.js` which also serves up the front end `dist` folder.
+
+3. By default, Heroku installs all the dependencies at our top level `package.json`, but we also need to install our `back-end` dependencies, which is what the `postinstall` script does.
 
 ## `server.js`
 
